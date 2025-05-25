@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:minimalchatroom/components/my_button.dart';
-import 'package:minimalchatroom/components/my_textfield.dart';
 
 import '../auth/auth_service.dart';
+import '../components/my_button.dart';
+import '../components/my_textfield.dart';
 
-class LoginPage extends StatelessWidget{
-
+class RegisterPage extends StatelessWidget{
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final void Function()? onTap;
 
-  LoginPage({super.key, this.onTap});
+  RegisterPage({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class LoginPage extends StatelessWidget{
           children: [
             Icon(Icons.message, size: 60,color: Theme.of(context).colorScheme.primary,),
 
-            const SizedBox(height: 15,),
+            const SizedBox(height: 10,),
 
-            Text("Welcome",style: TextStyle(fontSize: 50, color: Theme.of(context).colorScheme.primary),),
+            Text("Lets Create an Account",style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.primary),),
 
             const SizedBox(height: 25,),
 
@@ -34,16 +34,20 @@ class LoginPage extends StatelessWidget{
 
             MyTextField(hintText: "password", obscureText: true, controller: _passwordController,),
 
+            const SizedBox(height: 15,),
+
+            MyTextField(hintText: "confirm password", obscureText: true, controller: confirmPasswordController),
+
             const SizedBox(height: 25,),
 
-            MyButton(text: "Login", onTap: () => login(context),),
+            MyButton(text: "Register",onTap: () => register(context),),
 
             const SizedBox(height: 40,),
 
             Row (
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Not a member?",
+                Text("Already a member?",
                   style: TextStyle(
                     fontSize: 15,
                   ),
@@ -53,32 +57,31 @@ class LoginPage extends StatelessWidget{
 
                 GestureDetector(
                   onTap: onTap,
-                  child: Text("Register Now",
+                  child: Text("Login Now",
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 )
+
               ],
             ),
-
           ],
         ),
       ),
     );
   }
 
-  void login(BuildContext context) async{
-    try{
-    await AuthService()
-        .signInWithEmailPassword(_emailController.text, _passwordController.text);
-  }catch(e){
-      showDialog(context: context, builder: (context) => AlertDialog(
-        title: Text(e.toString()),
-      ));
+  void register(BuildContext context){
+    final authService = AuthService();
+    if(_passwordController.text != confirmPasswordController.text){
+     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+       content : Text("Passwords do not match!")
+     ));
+    }else{
+    authService.signUpWithEmailPassword(_emailController.text, _passwordController.text);
     }
   }
-
 
 }

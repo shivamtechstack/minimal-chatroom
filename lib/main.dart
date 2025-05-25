@@ -1,8 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:minimalchatroom/auth/auth_gate.dart';
+import 'package:minimalchatroom/auth/login_or_register.dart';
+import 'package:minimalchatroom/firebase_options.dart';
 import 'package:minimalchatroom/pages/login_page.dart';
 import 'package:minimalchatroom/themes/light_mode.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -14,8 +20,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: lightMode,
-      home: LoginPage(),
+      home: AuthGate(),
     );
   }
 }
