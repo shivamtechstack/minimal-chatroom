@@ -51,6 +51,7 @@ class HomePage extends StatelessWidget{
           // Navigate to chat screen
           Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(
             receiversEmail: userData['email'],
+            receiverID: userData['uid'],
           ),));
         },
       );
