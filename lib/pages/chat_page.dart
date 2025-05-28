@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:minimalchatroom/auth/auth_service.dart';
 import 'package:minimalchatroom/components/my_textfield.dart';
 
+import '../components/chat_bubble.dart';
 import '../services/chat/chat_service.dart';
 
 class ChatPage extends StatelessWidget{
@@ -27,10 +28,12 @@ class ChatPage extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orange[300],
         title: Text(receiversEmail),
         centerTitle: true,
       ),
       body: Column(
+
         children: [
           Expanded(
               child: _buildMessageList()
@@ -64,21 +67,38 @@ class ChatPage extends StatelessWidget{
 
   Widget _buildMessageItem(DocumentSnapshot doc){
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Text(data["message"]);
+
+    bool isCurrentUser = data["senderID"] == _authService.currentUser!.uid;
+
+    var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+
+    return Container(
+        alignment: alignment,
+        padding: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            ChatBubble(message: data["message"], isCurrentUser: isCurrentUser),
+          ],
+        )
+    );
   }
 
   Widget _buildUserInput(){
-    return Row(
-      children: [
-        Expanded(
-            child: MyTextField(
-                hintText: "Type a message",
-                obscureText: false,
-                controller: _messageController
-            )
-        ),
-        IconButton(onPressed: sendMessage, icon: Icon(Icons.send))
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 50, right: 10),
+      child: Row(
+        children: [
+          Expanded(
+              child: MyTextField(
+                  hintText: "Type a message",
+                  obscureText: false,
+                  controller: _messageController
+              )
+          ),
+          IconButton(onPressed: sendMessage, icon: Icon(Icons.send,size: 35,color: Colors.orange,))
+        ],
+      ),
     );
   }
 }
